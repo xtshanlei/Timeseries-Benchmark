@@ -9,7 +9,8 @@ tqdm.pandas()
 import h2o
 from h2o.automl import H2OAutoML
 from BenchModelClass import BenchModel
-from
+
+st.title('TimeSeries Benchmark')
 
 #######Upload data files#######
 uploaded_file = st.file_uploader("Choose a file")
