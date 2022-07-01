@@ -1,0 +1,157 @@
+from darts.timeseries import TimeSeries
+from darts.dataprocessing.transformers import Scaler
+from darts.models import Prophet
+from darts.models import NaiveDrift
+from darts.models import FFT
+from darts.models import AutoARIMA
+from darts.models import RNNModel
+from darts.models import ExponentialSmoothing
+from darts.models import NBEATSModel
+import json
+import numpy as np
+from sklearn.metrics import mean_absolute_error
+class BenchModel:
+
+
+  def __init__(self,dataframe,date_column,date_format,split_point,y_column,model_list,seasonal=None,scaled = True):
+    self.dataframe = dataframe
+    self.date_column = date_column
+    self.date_format = date_format
+    self.split_point = split_point
+    self.scaled = scaled
+    self.y_column = y_column
+    self.model_list = model_list
+    self.seasonal = seasonal
+
+  def import_dataset(file_url):
+    df = pd.read_csv(file_url)
+    df = df.drop('Unnamed: 0',axis =1)
+    return df
+  def prepare(self):
+    self.dataframe[self.date_column]=pd.to_datetime(self.dataframe[self.date_column],format=self.date_format)
+  def convert_2_timeseries(self):
+    self.series = TimeSeries.from_dataframe(self.dataframe,time_col=self.date_column,value_cols=self.y_column)
+  def series_train_test_split(self):
+    self.train_series, self.val_series = self.series.split_before(pd.Timestamp(self.split_point))
+    print("Train size: {}; Test size: {}".format(len(self.train_series),len(self.val_series)))
+
+  def series_scale(self):
+    if self.scaled == False:
+      self.series_transformed = self.series
+      self.train_transformed = self.train_series
+      self.val_transformed = self.val_series
+    else:
+      self.scaler = Scaler()
+      self.series_transformed = self.scaler.fit_transform(self.series)
+      self.train_transformed = self.scaler.transform(self.train_series)
+      self.val_transformed = self.scaler.transform(self.val_series)
+  def prophet(self):
+    model_prophet = Prophet()
+    model_prophet.fit(self.train_transformed)
+    if self.scaled == True:
+      self.pred_prophet = self.scaler.inverse_transform(model_prophet.predict((len(self.val_series))))
+    else:
+      self.pred_prophet = model_prophet.predict(len(self.val_series))
+
+  def naive_drift(self):
+    model_NDrift = NaiveDrift()
+    model_NDrift.fit(self.train_transformed)
+    if self.scaled == True:
+      self.pred_NDrift = self.scaler.inverse_transform(model_NDrift.predict((len(self.val_series))))
+    else:
+      self.pred_NDrift = model_NDrift.predict(len(self.val_series))
+
+  def fft(self):
+    model_fft = FFT()
+    model_fft.fit(self.train_transformed)
+    if self.scaled == True:
+      self.pred_fft = self.scaler.inverse_transform(model_fft.predict((len(self.val_series))))
+    else:
+      self.pred_fft = model_fft.predict(len(self.val_series))
+
+  def arima(self):
+    model_arima = AutoARIMA()
+    model_arima.fit(self.train_transformed)
+    if self.scaled == True:
+      self.pred_arima = self.scaler.inverse_transform(model_arima.predict((len(self.val_series))))
+    else:
+      self.pred_arima = model_arima.predict(len(self.val_series))
+  def lstm(self):
+    model_lstm = RNNModel(model='LSTM',input_chunk_length=1,output_chunk_length=1,batch_size=1,dropout =0.1,n_epochs =100,training_length=2)
+    model_lstm.fit(self.train_transformed)
+    if self.scaled == True:
+      self.pred_lstm = self.scaler.inverse_transform(model_lstm.predict((len(self.val_series))))
+    else:
+      self.pred_lstm = model_lstm.predict(len(self.val_series))
+
+  def ex_smoothing(self):
+    model_ex_smoothing = ExponentialSmoothing(seasonal =self.seasonal)
+    model_ex_smoothing.fit(self.train_transformed)
+    if self.scaled == True:
+      self.pred_ex_smoothing = self.scaler.inverse_transform(model_ex_smoothing.predict((len(self.val_series))))
+    else:
+      self.pred_ex_smoothing = model_ex_smoothing.predict(len(self.val_series))
+
+  def nbeats(self):
+    model_nbeats = NBEATSModel(input_chunk_length=1,output_chunk_length=1)
+    model_nbeats.fit(self.train_transformed)
+    if self.scaled == True:
+      self.pred_nbeats = self.scaler.inverse_transform(model_nbeats.predict((len(self.val_series))))
+    else:
+      self.pred_nbeats = model_nbeats.predict(len(self.val_series))
+
+
+  def bench_compare(self):
+    self.prepare()
+    self.convert_2_timeseries()
+    self.series_train_test_split()
+    self.series_scale()
+    self.pred_results = pd.DataFrame()
+    self.pred_results['Actual'] = pd.Series([num[0] for num in json.loads(self.val_series.to_json())['data']]).astype(int)
+    self.pred_results['date'] = pd.to_datetime(json.loads(self.val_series.to_json())['index'])
+    for model in self.model_list:
+      if model =='FacebookProphet':
+        print('Start training using '+model)
+        self.prophet()
+        self.pred_results[model] = pd.Series([num[0] for num in json.loads(self.pred_prophet.to_json())['data']]).astype(int)
+        print('Training completed!')
+
+      if model== 'NaiveDrift':
+        print('Start training using '+model)
+        self.naive_drift()
+        self.pred_results[model] = pd.Series([num[0] for num in json.loads(self.pred_NDrift.to_json())['data']]).astype(int)
+        print('Training completed!')
+      if model== 'FFT':
+        print('Start training using '+model)
+        self.fft()
+        self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_fft.to_json())['data']]).astype(int)
+        print('Training completed!')
+      if model== 'Arima':
+        print('Start training using '+model)
+        self.arima()
+        self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_arima.to_json())['data']]).astype(int)
+        print('Training completed!')
+      if model== 'LSTM':
+        print('Start training using '+model)
+        self.lstm()
+        self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_lstm.to_json())['data']]).astype(int)
+        print('Training completed!')
+      if model== 'ExponentialSmoothing':
+        print('Start training using '+model)
+        self.ex_smoothing()
+        self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_ex_smoothing.to_json())['data']]).astype(int)
+        print('Training completed!')
+      if model=='NBEATS':
+        print('Start training using'+model)
+        self.nbeats()
+        self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_nbeats.to_json())['data']]).astype(int)
+        print('Training completed!')
+
+    self.metric_results = pd.DataFrame(columns =['Model','MAE','MAPE'])
+    i = 0
+    for pred_model_name in self.model_list:
+      mae_result = mean_absolute_error(self.pred_results['Actual'],self.pred_results[pred_model_name])
+      mape_result = mape(self.pred_results['Actual'],self.pred_results[pred_model_name])
+      self.metric_results.loc[i]=[pred_model_name,mae_result,mape_result]
+      i+=1
+    return self.pred_results,self.metric_results
