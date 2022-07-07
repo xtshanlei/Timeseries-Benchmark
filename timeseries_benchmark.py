@@ -7,8 +7,8 @@ import seaborn as sns
 sns.set()
 tqdm.pandas()
 from BenchModelClass import BenchModel
-
-st.title('TimeSeries Benchmark')
+#########################################################
+st.sidebar.title('TimeSeries Forecasting')
 
 #######Upload data files#######
 st.header('Upload dataset')
@@ -18,6 +18,7 @@ if uploaded_file is not None:
     st.write(dataframe)
 
 #######Choose the time series column#######
+st.header('Which column to forecast?')
 time_series_column = st.selectbox(
                                   "Please choose the column that you want to forecast",
                                   dataframe.columns
