@@ -40,7 +40,7 @@ if uploaded_file:
                                                     ['Arima','FFT','FacebookProphet','TCN','LSTM','NBEATS']
                                                     )
                 st.write(list(selected_model_list))
-                paras ={
+                '''paras ={
                     "dataframe":dataframe,
                     "date_column":date_column_name,
                     "date_format":date_format,
@@ -54,3 +54,4 @@ if uploaded_file:
                     }
                 london_model = BenchModel(**paras)
                 pred_london_df,metric_london_df = london_model.bench_compare()
+                '''
