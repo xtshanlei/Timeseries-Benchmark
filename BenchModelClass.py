@@ -9,6 +9,7 @@ from darts.models import ExponentialSmoothing
 from darts.models import NBEATSModel
 from darts.models import TCNModel
 from darts.models import VARIMA
+import pandas as pd
 import json
 import numpy as np
 from sklearn.metrics import mean_absolute_error
