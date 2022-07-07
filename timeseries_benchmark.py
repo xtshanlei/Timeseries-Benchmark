@@ -36,6 +36,7 @@ if uploaded_file:
                                         "Please choose model that you want to use",
                                         ['Arima','FFT','FacebookProphet','TCN','LSTM','NBEATS']
                                         )
+    st.write(list(selected_model_list)
     if timeseries_to_forecast and date_column_name and date_format and selected_model_list:
         paras ={
             "dataframe":dataframe,
