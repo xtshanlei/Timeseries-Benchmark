@@ -28,15 +28,18 @@ date_column = st.selectbox(
                                   dataframe.columns
                                     )
 
-date_format = st.text_input("Please indicate the date format below (%Y: year 
-                            sfdas")
+date_format = st.text_input("Please indicate the date format below (%Y: year; %m: month; %d: day; ")
 #######Choose darts models#######
 st.header('3. Model selection')
-st.selectbox
+selected_model_list = st.multiselect(
+                                    "Please choose the column of the date",
+                                    ['Arima','FFT','FacebookProphet','TCN','LSTM','NBEATS']
+                                    )
+st.write(selected_model_list)
 london_paras ={
     "dataframe":dataframe,
     "date_column":date_column,
-    "date_format":None,
+    "date_format":date_format,
     "split_point":'2018-01-01',
     "y_column":'arrivals',
     "num_lags":4,
