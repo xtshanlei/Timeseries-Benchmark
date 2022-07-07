@@ -2,3 +2,4 @@ matplotlib
 pystan
 prophet
 seaborn
+darts
