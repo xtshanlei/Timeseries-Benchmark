@@ -39,7 +39,7 @@ if uploaded_file:
                                                     "Please choose model that you want to use",
                                                     ['Arima','FFT','FacebookProphet','TCN','LSTM','NBEATS']
                                                     )
-                st.write(list(selected_model_list))
+                st.write(['23','234'])
                 if st.button('Start the training...'):
                     paras ={
                         "dataframe":dataframe,
