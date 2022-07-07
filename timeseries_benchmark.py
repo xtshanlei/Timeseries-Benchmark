@@ -27,12 +27,14 @@ date_column = st.selectbox(
                                   "Please choose the column of the date",
                                   dataframe.columns
                                     )
+st.write("Please indicate the date format below \n %Y: year")
+date_format = st.text_input('%Y')
 #######Choose darts models#######
 st.header('3. Model selection')
 st.selectbox
 london_paras ={
-    "dataframe":london_df,
-    "date_column":'quarter',
+    "dataframe":dataframe,
+    "date_column":date_column,
     "date_format":None,
     "split_point":'2018-01-01',
     "y_column":'arrivals',
