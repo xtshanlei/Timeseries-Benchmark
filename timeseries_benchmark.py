@@ -39,7 +39,6 @@ if uploaded_file:
                                                     "Please choose model that you want to use",
                                                     ['Arima','FFT','FacebookProphet','TCN','LSTM','NBEATS']
                                                     )
-                st.write(['23','234'])
                 if st.button('Start the training...'):
                     paras ={
                         "dataframe":dataframe,
@@ -53,6 +52,7 @@ if uploaded_file:
                         "model_list": selected_model_list,
                         "scaled": True,
                         }
+                    st.write(selected_model_list)
                     forecasting_model = BenchModel(**paras)
                     st.write(forecasting_model)
                     pred_df,metric_df = forcasting_model.bench_compare()
