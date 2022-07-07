@@ -27,8 +27,8 @@ date_column = st.selectbox(
                                   "Please choose the column of the date",
                                   dataframe.columns
                                     )
-st.write("Please indicate the date format below \n %Y: year")
-date_format = st.text_input('%Y')
+
+date_format = st.text_input('Please indicate the date format below \n%Y: year')
 #######Choose darts models#######
 st.header('3. Model selection')
 st.selectbox
