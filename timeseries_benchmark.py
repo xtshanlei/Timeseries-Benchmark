@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set()
 tqdm.pandas()
-import h2o
-from h2o.automl import H2OAutoML
 from BenchModelClass import BenchModel
 
 st.title('TimeSeries Benchmark')
