@@ -32,11 +32,10 @@ date_format = st.text_input("Please indicate the date format below (%Y: year; %m
 #######Choose darts models#######
 st.header('3. Model selection')
 selected_model_list = st.multiselect(
-                                    "Please choose the column of the date",
+                                    "Please choose model that you want to use",
                                     ['Arima','FFT','FacebookProphet','TCN','LSTM','NBEATS']
                                     )
-st.write(selected_model_list)
-london_paras ={
+paras ={
     "dataframe":dataframe,
     "date_column":date_column,
     "date_format":date_format,
@@ -48,5 +47,5 @@ london_paras ={
     "model_list": ['Arima','FFT','FacebookProphet','TCN','LSTM','NBEATS'],
     "scaled": True,
     }
-london_model = BenchModel(**london_paras)
+london_model = BenchModel(**paras)
 pred_london_df,metric_london_df = london_model.bench_compare()

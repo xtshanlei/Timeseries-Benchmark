@@ -3,17 +3,19 @@ from darts.dataprocessing.transformers import Scaler
 from darts.models import Prophet
 from darts.models import NaiveDrift
 from darts.models import FFT
-from darts.models import AutoARIMA
+from darts.models import ARIMA
 from darts.models import RNNModel
 from darts.models import ExponentialSmoothing
 from darts.models import NBEATSModel
+from darts.models import TCNModel
+from darts.models import VARIMA
 import json
 import numpy as np
 from sklearn.metrics import mean_absolute_error
 class BenchModel:
 
 
-  def __init__(self,dataframe,date_column,date_format,split_point,y_column,model_list,seasonal=None,scaled = True):
+  def __init__(self,dataframe,date_column,date_format,split_point,y_column,model_list,num_lags,input_length,kernel_size,seasonal=None,scaled = True):
     self.dataframe = dataframe
     self.date_column = date_column
     self.date_format = date_format
@@ -22,6 +24,9 @@ class BenchModel:
     self.y_column = y_column
     self.model_list = model_list
     self.seasonal = seasonal
+    self.num_lags = num_lags
+    self.input_length = input_length
+    self.kernel_size = kernel_size
 
   def import_dataset(file_url):
     df = pd.read_csv(file_url)
@@ -53,6 +58,14 @@ class BenchModel:
     else:
       self.pred_prophet = model_prophet.predict(len(self.val_series))
 
+  def tcn(self):
+    model_tcn = TCNModel(input_chunk_length=self.input_length,output_chunk_length=1,kernel_size=self.kernel_size,batch_size=2,n_epochs=100)
+    model_tcn.fit(self.train_transformed)
+    if self.scaled == True:
+      self.pred_tcn = self.scaler.inverse_transform(model_tcn.predict((len(self.val_series))))
+    else:
+      self.pred_tcn = model_tcn.predict(len(self.val_series))
+
   def naive_drift(self):
     model_NDrift = NaiveDrift()
     model_NDrift.fit(self.train_transformed)
@@ -70,14 +83,14 @@ class BenchModel:
       self.pred_fft = model_fft.predict(len(self.val_series))
 
   def arima(self):
-    model_arima = AutoARIMA()
+    model_arima = ARIMA(p=self.num_lags,d=0)
     model_arima.fit(self.train_transformed)
     if self.scaled == True:
       self.pred_arima = self.scaler.inverse_transform(model_arima.predict((len(self.val_series))))
     else:
       self.pred_arima = model_arima.predict(len(self.val_series))
   def lstm(self):
-    model_lstm = RNNModel(model='LSTM',input_chunk_length=1,output_chunk_length=1,batch_size=1,dropout =0.1,n_epochs =100,training_length=2)
+    model_lstm = RNNModel(model='LSTM',input_chunk_length=self.input_length,output_chunk_length=1,batch_size=2,n_epochs=100,training_length=self.kernel_size)
     model_lstm.fit(self.train_transformed)
     if self.scaled == True:
       self.pred_lstm = self.scaler.inverse_transform(model_lstm.predict((len(self.val_series))))
@@ -92,8 +105,16 @@ class BenchModel:
     else:
       self.pred_ex_smoothing = model_ex_smoothing.predict(len(self.val_series))
 
+  def varima(self):
+    model_varima = VARIMA(p=self.num_lags)
+    model_varima.fit(self.train_transformed)
+    if self.scaled == True:
+      self.pred_varima = self.scaler.inverse_transform(model_varima.predict((len(self.val_series))))
+    else:
+      self.pred_varima = model_varima.predict(len(self.val_series))
+
   def nbeats(self):
-    model_nbeats = NBEATSModel(input_chunk_length=1,output_chunk_length=1)
+    model_nbeats = NBEATSModel(input_chunk_length=self.input_length,output_chunk_length=1)
     model_nbeats.fit(self.train_transformed)
     if self.scaled == True:
       self.pred_nbeats = self.scaler.inverse_transform(model_nbeats.predict((len(self.val_series))))
@@ -142,9 +163,19 @@ class BenchModel:
         self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_ex_smoothing.to_json())['data']]).astype(int)
         print('Training completed!')
       if model=='NBEATS':
-        print('Start training using'+model)
+        print('Start training using '+model)
         self.nbeats()
         self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_nbeats.to_json())['data']]).astype(int)
+        print('Training completed!')
+      if model=='TCN':
+        print('Start training using '+model)
+        self.tcn()
+        self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_tcn.to_json())['data']]).astype(int)
+        print('Training completed!')
+      if model=='VARIMA':
+        print('Start training using '+model)
+        self.varima()
+        self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_varima.to_json())['data']]).astype(int)
         print('Training completed!')
 
     self.metric_results = pd.DataFrame(columns =['Model','MAE','MAPE'])
