@@ -54,4 +54,5 @@ if uploaded_file:
                         "scaled": True,
                         }
                     forecasting_model = BenchModel(**paras)
+                    st.write(forecasting_model)
                     pred_df,metric_df = forcasting_model.bench_compare()
