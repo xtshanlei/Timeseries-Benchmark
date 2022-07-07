@@ -40,18 +40,4 @@ if uploaded_file:
                                                     ['Arima','FFT','FacebookProphet','TCN','LSTM','NBEATS']
                                                     )
                 st.write(list(selected_model_list)
-
-                paras ={
-                    "dataframe":dataframe,
-                    "date_column":date_column_name,
-                    "date_format":date_format,
-                    "split_point":'2017-03-27',
-                    "y_column":timeseries_to_forecast,
-                    "num_lags":1,
-                    "input_length":30,
-                    "kernel_size":12,
-                    "model_list": selected_model_list,
-                    "scaled": True,
-                    }
-                london_model = BenchModel(**paras)
-                pred_london_df,metric_london_df = london_model.bench_compare()
+                
