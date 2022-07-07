@@ -40,7 +40,7 @@ paras ={
     "date_column":date_column,
     "date_format":date_format,
     "split_point":'2018-01-01',
-    "y_column":'arrivals',
+    "y_column":timeseries_to_forecast,
     "num_lags":4,
     "input_length":30,
     "kernel_size":12,
