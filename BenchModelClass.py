@@ -16,9 +16,8 @@ from sklearn.metrics import mean_absolute_error
 class BenchModel:
 
 
-  def __init__(self,dataframe,data_column, date_column,date_format,split_point,y_column,model_list,num_lags,input_length,kernel_size,seasonal=None,scaled = True):
+  def __init__(self,dataframe,data_column,date_format,split_point,y_column,model_list,num_lags,input_length,kernel_size,seasonal=None,scaled = True):
     self.dataframe = dataframe
-    self.data_column = data_column
     self.date_column = date_column
     self.date_format = date_format
     self.split_point = split_point
