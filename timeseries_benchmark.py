@@ -41,6 +41,8 @@ if uploaded_file:
                                                     "Please choose model that you want to use",
                                                     ['Arima','FFT','FacebookProphet','TCN','LSTM','NBEATS']
                                                     )
+                if 'Arima' is in selected_model_list:
+                    st.write('yes')
                 if st.button('Start the training...'):
                     paras ={
                         "dataframe":dataframe,
