@@ -7,6 +7,8 @@ import seaborn as sns
 sns.set()
 tqdm.pandas()
 from BenchModelClass import BenchModel
+def mape(y_true,y_pred):
+  return '{}%'.format(round((np.mean(np.abs((y_true - y_pred) / y_true)) * 100),2))
 #########################################################
 st.sidebar.title('TimeSeries Forecasting')
 
