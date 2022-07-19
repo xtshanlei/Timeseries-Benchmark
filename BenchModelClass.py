@@ -181,7 +181,7 @@ class BenchModel:
         st.write('Training using '+model)
         self.varima()
         self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_varima.to_json())['data']]).astype(int)
-      i = i+1/len(self.model_list)*100
+      i = int(i+1/len(self.model_list)*100)
       st.write(i)
       training_progress_bar.progress(i)
 
