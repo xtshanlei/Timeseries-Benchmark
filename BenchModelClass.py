@@ -28,7 +28,7 @@ class BenchModel:
     self.num_lags = num_lags
     self.input_length = input_length
     self.kernel_size = kernel_size
-  def mape(y_true,y_pred):
+  def mape(self,y_true,y_pred):
     return '{}%'.format(round((np.mean(np.abs((y_true - y_pred) / y_true)) * 100),2))
   def import_dataset(file_url):
     df = pd.read_csv(file_url)
