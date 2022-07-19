@@ -3,3 +3,4 @@ pystan
 prophet
 seaborn
 darts
+numba
