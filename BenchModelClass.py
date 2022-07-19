@@ -183,8 +183,10 @@ class BenchModel:
     self.metric_results = pd.DataFrame(columns =['Model','MAE','MAPE'])
     i = 0
     for pred_model_name in self.model_list:
-      mae_result = mean_absolute_error(self.pred_results['Actual'],self.pred_results[pred_model_name])
-      mape_result = self.mape(self.pred_results['Actual'],self.pred_results[pred_model_name])
+      actual_data = self.pred_results['Actual']
+      pred_data = self.pred_results[pred_model_name]
+      mae_result = mean_absolute_error(actual_data,pred_data)
+      mape_result = self.mape(actual_data,pred_data)
       self.metric_results.loc[i]=[pred_model_name,mae_result,mape_result]
       i+=1
     return self.pred_results,self.metric_results
