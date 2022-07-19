@@ -55,7 +55,9 @@ if uploaded_file:
                         "scaled": True,
                         }
                     st.write(selected_model_list)
-                    forecasting_model = BenchModel(**paras)
-                    st.write(forecasting_model)
-                    pred_df,metric_df = forecasting_model.bench_compare()
+                    with st.spinner('Training starts....'):
+                        forecasting_model = BenchModel(**paras)
+                        st.write(forecasting_model)
+                        pred_df,metric_df = forecasting_model.bench_compare()
+                    st.success('Training completed!')
                     st.write(metric_df)
