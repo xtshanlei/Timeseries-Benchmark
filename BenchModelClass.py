@@ -13,6 +13,7 @@ import pandas as pd
 import json
 import numpy as np
 from sklearn.metrics import mean_absolute_error
+import streamlit as st
 class BenchModel:
 
 
@@ -134,51 +135,51 @@ class BenchModel:
     self.pred_results['date'] = pd.to_datetime(json.loads(self.val_series.to_json())['index'])
     for model in self.model_list:
       if model =='FacebookProphet':
-        print('Start training using '+model)
+        st.write('Start training using '+model)
         self.prophet()
         self.pred_results[model] = pd.Series([num[0] for num in json.loads(self.pred_prophet.to_json())['data']]).astype(int)
-        print('Training completed!')
+        st.write('Training completed!')
 
       if model== 'NaiveDrift':
-        print('Start training using '+model)
+        st.write('Start training using '+model)
         self.naive_drift()
         self.pred_results[model] = pd.Series([num[0] for num in json.loads(self.pred_NDrift.to_json())['data']]).astype(int)
-        print('Training completed!')
+        st.write('Training completed!')
       if model== 'FFT':
-        print('Start training using '+model)
+        st.write('Start training using '+model)
         self.fft()
         self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_fft.to_json())['data']]).astype(int)
-        print('Training completed!')
+        st.write('Training completed!')
       if model== 'Arima':
-        print('Start training using '+model)
+        st.write('Start training using '+model)
         self.arima()
         self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_arima.to_json())['data']]).astype(int)
-        print('Training completed!')
+        st.write('Training completed!')
       if model== 'LSTM':
-        print('Start training using '+model)
+        st.write('Start training using '+model)
         self.lstm()
         self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_lstm.to_json())['data']]).astype(int)
-        print('Training completed!')
+        st.write('Training completed!')
       if model== 'ExponentialSmoothing':
-        print('Start training using '+model)
+        st.write('Start training using '+model)
         self.ex_smoothing()
         self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_ex_smoothing.to_json())['data']]).astype(int)
-        print('Training completed!')
+        st.write('Training completed!')
       if model=='NBEATS':
-        print('Start training using '+model)
+        st.write('Start training using '+model)
         self.nbeats()
         self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_nbeats.to_json())['data']]).astype(int)
-        print('Training completed!')
+        st.write('Training completed!')
       if model=='TCN':
-        print('Start training using '+model)
+        st.write('Start training using '+model)
         self.tcn()
         self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_tcn.to_json())['data']]).astype(int)
-        print('Training completed!')
+        st.write('Training completed!')
       if model=='VARIMA':
-        print('Start training using '+model)
+        st.write('Start training using '+model)
         self.varima()
         self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_varima.to_json())['data']]).astype(int)
-        print('Training completed!')
+        st.write('Training completed!')
 
     self.metric_results = pd.DataFrame(columns =['Model','MAE','MAPE'])
     i = 0
