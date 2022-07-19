@@ -46,7 +46,7 @@ if uploaded_file:
                         "dataframe":dataframe,
                         "date_column":date_column_name,
                         "date_format":date_format,
-                        "split_point":'2017-03-27',
+                        "split_point":'2017-04-22',
                         "y_column":timeseries_to_forecast,
                         "num_lags":1,
                         "input_length":30,
@@ -54,9 +54,10 @@ if uploaded_file:
                         "model_list": selected_model_list,
                         "scaled": True,
                         }
-                    st.write(selected_model_list)
+
                     with st.spinner('Training in progress, please wait....'):
                         forecasting_model = BenchModel(**paras)
                         pred_df,metric_df = forecasting_model.bench_compare()
                     st.success('Training completed!')
+                    st.header("4. Performance table")
                     st.write(metric_df)

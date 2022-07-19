@@ -141,7 +141,6 @@ class BenchModel:
         st.write('Training using '+model)
         self.prophet()
         self.pred_results[model] = pd.Series([num[0] for num in json.loads(self.pred_prophet.to_json())['data']]).astype(int)
-        st.write('Training completed!')
 
       if model== 'NaiveDrift':
         st.write('Training using '+model)
@@ -182,7 +181,6 @@ class BenchModel:
         self.varima()
         self.pred_results[model]= pd.Series([num[0] for num in json.loads(self.pred_varima.to_json())['data']]).astype(int)
       i = int(i+1/len(self.model_list)*100)
-      st.write(i)
       training_progress_bar.progress(i)
 
     self.metric_results = pd.DataFrame(columns =['Model','MAE','MAPE'])
