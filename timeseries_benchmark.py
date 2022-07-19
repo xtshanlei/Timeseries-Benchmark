@@ -33,7 +33,7 @@ if uploaded_file:
                                             )
         if date_column_name:
 
-            date_format = st.text_input("Please indicate the date format below (%Y: year; %m: month; %d: day; ")
+            date_format = st.text_input("Please indicate the date format below (%Y: year; %m: month; %d: day;) ")
             #######Choose darts models#######
             st.header('3. Model selection')
             if date_format:
@@ -57,7 +57,6 @@ if uploaded_file:
                     st.write(selected_model_list)
                     with st.spinner('Training in progress, please wait....'):
                         forecasting_model = BenchModel(**paras)
-                        st.write(forecasting_model)
                         pred_df,metric_df = forecasting_model.bench_compare()
                     st.success('Training completed!')
                     st.write(metric_df)
