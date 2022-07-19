@@ -51,7 +51,7 @@ if uploaded_file:
                         "num_lags":1,
                         "input_length":30,
                         "kernel_size":12,
-                        "model_list": ['FFT'],
+                        "model_list": selected_model_list,
                         "scaled": True,
                         }
                     st.write(selected_model_list)
