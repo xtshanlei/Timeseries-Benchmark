@@ -58,3 +58,4 @@ if uploaded_file:
                     forecasting_model = BenchModel(**paras)
                     st.write(forecasting_model)
                     pred_df,metric_df = forecasting_model.bench_compare()
+                    st.write(metric_df)
