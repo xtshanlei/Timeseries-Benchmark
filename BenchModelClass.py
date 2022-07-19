@@ -28,7 +28,8 @@ class BenchModel:
     self.num_lags = num_lags
     self.input_length = input_length
     self.kernel_size = kernel_size
-
+  def mape(y_true,y_pred):
+    return '{}%'.format(round((np.mean(np.abs((y_true - y_pred) / y_true)) * 100),2))
   def import_dataset(file_url):
     df = pd.read_csv(file_url)
     df = df.drop('Unnamed: 0',axis =1)
@@ -183,7 +184,7 @@ class BenchModel:
     i = 0
     for pred_model_name in self.model_list:
       mae_result = mean_absolute_error(self.pred_results['Actual'],self.pred_results[pred_model_name])
-      mape_result = mape(self.pred_results['Actual'],self.pred_results[pred_model_name])
+      mape_result = self.mape(self.pred_results['Actual'],self.pred_results[pred_model_name])
       self.metric_results.loc[i]=[pred_model_name,mae_result,mape_result]
       i+=1
     return self.pred_results,self.metric_results
